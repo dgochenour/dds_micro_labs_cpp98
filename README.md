@@ -29,7 +29,8 @@ Lab 5. Switch to a keyed type, and define topic name in IDL
   - modify the IDL to add //@key to the "id" member
   - add a constant for the topic name
   - call rtiddsgen again to impose the change (remember: "update", not "create")
-  - modify pub and sub code to use this constant
+    - $RTIMEHOME/rtiddsgen/scripts/rtiddsgen -micro -language C++ -update typefiles ./quickstart.idl
+  - modify quickstartApplication.cxx to use this constant
 
 Lab 6. Ownership
 
