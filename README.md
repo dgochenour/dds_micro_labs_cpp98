@@ -20,6 +20,7 @@ Lab 4. Load user type into Admin Console
 
   - set DR and DW deadline periods to 1.5s to eliminate match errors
   - create XML type representation and load into Admin Console
+    - $RTIMEHOME/rtiddsgen/scripts/rtiddsgen -convertToXml ./quickstart.idl
   - open the tool and note how all DWs are writing to the same instance
     - but it doesn't work! (change the type name in quickstartApplication.c)
 
