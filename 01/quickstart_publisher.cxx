@@ -116,6 +116,11 @@ DDS_Long sleep_time, DDS_Long count)
     ++i)
     {
         /* TODO set sample attributes here */
+        
+        // LAB #1 - set some values in the sample before we send it
+        sample->id =1234;
+        sample->value1 = i;
+        sample->name = "DonGochenour";
 
         retcode = hw_writer->write(*sample, DDS_HANDLE_NIL);
         if (retcode != DDS_RETCODE_OK)

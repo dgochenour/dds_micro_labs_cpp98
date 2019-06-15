@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <iostream>
 
 #ifndef rti_me_cpp_hxx
 #include "rti_me_cpp.hxx"
@@ -43,6 +44,11 @@ void take_and_print(typename T::DataReader* reader)
         {
             printf("\nValid sample received\n");
             /* TODO read sample attributes here */
+
+            // LAB #1 - print out the members of the received sample
+            std::cout << "id = " << sample->id << std::endl;
+            std::cout << "value1 = " << sample->value1 << std::endl;
+            std::cout << "name = " << sample->name << std::endl;
         }
         else
         {
