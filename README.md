@@ -10,7 +10,7 @@ Lab 2. Deadline QoS
   - Fix the DW QoS and rerun, showing that data now flows
   - Note that we are actually not sending within the deadline period... add listener
 
-Lab 3. Reporting A QoS Mismatch
+Lab 3. Reporting A QoS Mismatch in the publisher
 
   - In the publisher code, add a listener to report on Offered QoS incompatability
   - Set the DW deadline period to be 1.5s to cause a QoS mismatch
