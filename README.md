@@ -40,6 +40,7 @@ Lab 6. Ownership
 
 Lab 7. Waitsets
 
+  - remove or comment out the exclusize ownership code in the pub and sub
   - modify the subscriber code to use a waitset to be notified of data
   - "recycle" the listener callback and call it when the WaitSet returns with
     data.
