@@ -56,4 +56,12 @@ Lab - FlatData
     - on the publisher, modify the writer code to get offsets and set sample values
     - on the subscriber, modify the DR listener to get offsets and print a couple sample values
     
+Lab - ZeroCopy
+
+  - create a fresh user project using Image.idl
+    - $RTIMEHOME/rtiddsgen/scripts/rtiddsgen -micro -language C++ -create typefiles -create examplefiles -create makefiles ./Image.idl
+  - correct the errant double loan in the publisher code (this is MICRO-2079)
+  - review the example as generated, pointing out the parts where SHMEM is set up
+  - add the FlatData code (this can be "recycled" from the previous lab) to the publisher and subscribercd
+
 

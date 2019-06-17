@@ -110,7 +110,7 @@ DDS_Long sleep_time, DDS_Long count)
     {
         /* TODO set sample attributes here */
 
-        // LAB - remove this duplicate get_loan(). This is defect MICRO-2079
+        // LAB - remove this duplicate get_loan(). THIS IS DEFECT MICRO-2079
         // retcode = hw_writer->get_loan(sample);
 
         // if (retcode != DDS_RETCODE_OK) 
@@ -126,6 +126,21 @@ DDS_Long sleep_time, DDS_Long count)
             printf("Failed to get loaned sample\n");
             return -1;
         }        
+
+        // LAB -- get the root offset 
+        ImageOffset offset_root = sample->root();
+        // LAB -- get an offset to the Dimension struct
+        DimensionOffset offset_dimension = sample->root().dimension();
+        // LAB -- get an offset to the img_data array
+        rti::flat::PrimitiveArrayOffset<DDS_Octet, (30000000)> offset_img_data = sample->root().img_data();
+        DDS_Octet *octet_array = rti::flat::plain_cast(offset_img_data);
+
+        // LAB -- set some values in the sample
+        offset_root.timestamp(1234);
+        offset_dimension.width(1920);
+        offset_dimension.height(1080);
+        octet_array[0] = (DDS_Octet)22;
+        octet_array[1] = (DDS_Octet)33;
 
         retcode = hw_writer->write(*sample, DDS_HANDLE_NIL);
         if (retcode != DDS_RETCODE_OK)
