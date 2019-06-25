@@ -64,4 +64,16 @@ Lab - ZeroCopy
   - review the example as generated, pointing out the parts where SHMEM is set up
   - add the FlatData code (this can be "recycled" from the previous lab) to the publisher and subscribercd
 
+Lab - DPSE Discovery
+
+  - create a fresh user project using quickstart.idl
+    - $RTIMEHOME/rtiddsgen/scripts/rtiddsgen -micro -language C++ -namespace -create typefiles -create examplefiles -create makefiles ./quickstart.idl
+  - update the quickstartApplication.cxx file, replacing dpde entities and variables with dpse
+  - update the publisher and subscriber files, discussing the need for the additions
+    - don't forget to manually set RTPS object IDs!
+
+
+
+
+
 
