@@ -7,27 +7,27 @@
 #ifndef rti_me_cpp_hxx
 #include "rti_me_cpp.hxx"
 #endif
-#include "wh_sm/wh_sm_history.h"
-#include "rh_sm/rh_sm_history.h"
 
 #include "quickstart.h"
 #include "quickstartSupport.h"
 #include "quickstartPlugin.h"
 #include "quickstartApplication.h"
 
-class myModule_myTypeReaderListener : public DDSDataReaderListener
+using namespace DDS;
+
+class myTypeReaderListener : public DataReaderListener
 {
 
   public:
 
-    virtual void on_data_available(DDSDataReader *reader);
+    virtual void on_data_available(DataReader *reader);
 };
 
 template <typename T>
 void take_and_print(typename T::DataReader* reader)
 {
-    DDS_ReturnCode_t retcode;
-    struct DDS_SampleInfo sample_info;
+    ReturnCode_t retcode;
+    SampleInfo sample_info;
     T *sample = NULL;
 
     sample = T::TypeSupport::create_data();
@@ -38,14 +38,14 @@ void take_and_print(typename T::DataReader* reader)
     }
 
     retcode = reader->take_next_sample(*sample, sample_info);
-    while (retcode == DDS_RETCODE_OK)
+    while (retcode == RETCODE_OK)
     {
         if (sample_info.valid_data)
         {
             printf("\nValid sample received\n");
             /* TODO read sample attributes here */
 
-            // LAB #1 - print out the members of the received sample
+            // LAB #1 -- print out the members of the received sample
             std::cout << "id = " << sample->id << std::endl;
             std::cout << "value1 = " << sample->value1 << std::endl;
             std::cout << "name = " << sample->name << std::endl;
@@ -61,23 +61,21 @@ void take_and_print(typename T::DataReader* reader)
 }
 
 void
-myModule_myTypeReaderListener::on_data_available(DDSDataReader * reader)
+myTypeReaderListener::on_data_available(DataReader * reader)
 {
-    myModule_myTypeDataReader *hw_reader = myModule_myTypeDataReader::narrow(reader);
-    take_and_print<myModule_myType>(hw_reader);
+    myModule::myTypeDataReader *hw_reader = myModule::myTypeDataReader::narrow(reader);
+    take_and_print<myModule::myType>(hw_reader);
 }
-
 int
-subscriber_main_w_args(DDS_Long domain_id, char *udp_intf, char *peer,
-DDS_Long sleep_time, DDS_Long count)
+subscriber_main_w_args(Long domain_id, char *udp_intf, char *peer,
+Long sleep_time, Long count)
 {
-    DDSSubscriber *subscriber = NULL;
-    DDSDataReader *datareader = NULL;
-    myModule_myTypeReaderListener *listener  = new myModule_myTypeReaderListener();
-    DDS_DataReaderQos dr_qos;
-    DDS_ReturnCode_t retcode;
+    Subscriber *subscriber = NULL;
+    DataReader *datareader = NULL;
+    myTypeReaderListener *listener  = new myTypeReaderListener();
+    DataReaderQos dr_qos;
+    ReturnCode_t retcode;
     Application *application = NULL;
-    RT_Registry_T *registry = NULL;
 
     application = new Application();
     if (application == NULL)
@@ -93,15 +91,15 @@ DDS_Long sleep_time, DDS_Long count)
     peer, 
     sleep_time, 
     count);
-    if (retcode != DDS_RETCODE_OK)
+    if (retcode != RETCODE_OK)
     {
         printf("failed Application initialize\n");
         goto done;
     }
 
     subscriber = application->participant->create_subscriber(
-        DDS_SUBSCRIBER_QOS_DEFAULT,NULL,
-        DDS_STATUS_MASK_NONE);
+        SUBSCRIBER_QOS_DEFAULT,NULL,
+        STATUS_MASK_NONE);
     if (subscriber == NULL)
     {
         printf("subscriber == NULL\n");
@@ -109,7 +107,7 @@ DDS_Long sleep_time, DDS_Long count)
     }
 
     retcode = subscriber->get_default_datareader_qos(dr_qos);
-    if (retcode != DDS_RETCODE_OK)
+    if (retcode != RETCODE_OK)
     {
         printf("failed get_default_datareader_qos\n");
         goto done;
@@ -125,17 +123,17 @@ DDS_Long sleep_time, DDS_Long count)
 
     /* Reliability QoS */
     #ifdef USE_RELIABLE_QOS
-    dr_qos.reliability.kind = DDS_RELIABLE_RELIABILITY_QOS;
+    dr_qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
     #else
-    dr_qos.reliability.kind = DDS_BEST_EFFORT_RELIABILITY_QOS;
+    dr_qos.reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
     #endif
 
-    /* Only DDS_DATA_AVAILABLE_STATUS supported currently */
+    /* Only DATA_AVAILABLE_STATUS supported currently */
     datareader = subscriber->create_datareader(
         application->topic,
         dr_qos,
         listener,
-        DDS_DATA_AVAILABLE_STATUS);
+        DATA_AVAILABLE_STATUS);
 
     if (datareader == NULL)
     {
@@ -144,7 +142,7 @@ DDS_Long sleep_time, DDS_Long count)
     }
 
     retcode = application->enable();
-    if (retcode != DDS_RETCODE_OK)
+    if (retcode != RETCODE_OK)
     {
         printf("failed to enable application\n");
         goto done;
@@ -193,12 +191,12 @@ DDS_Long sleep_time, DDS_Long count)
 int
 main(int argc, char **argv)
 {
-    DDS_Long i = 0;
-    DDS_Long domain_id = 0;
+    Long i = 0;
+    Long domain_id = 0;
     char *peer = NULL;
     char *udp_intf = NULL;
-    DDS_Long sleep_time = 1000;
-    DDS_Long count = 0;
+    Long sleep_time = 1000;
+    Long count = 0;
 
     for (i = 1; i < argc; ++i)
     {
@@ -271,11 +269,11 @@ int
 subscriber_main(void)
 {
     /* Explicitly configure args below */
-    DDS_Long domain_id = 44;
+    Long domain_id = 44;
     char *peer = "10.10.65.103";
     char *udp_intf = NULL;
-    DDS_Long sleep_time = 1000;
-    DDS_Long count = 0;
+    Long sleep_time = 1000;
+    Long count = 0;
 
     return subscriber_main_w_args(domain_id, udp_intf, peer, sleep_time, count);
 }
