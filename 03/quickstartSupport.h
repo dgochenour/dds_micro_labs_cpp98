@@ -29,27 +29,31 @@ class __declspec(dllimport) DDSDataReader_impl;
 
 #endif
 
-/* ========================================================================== */
-/**
-Uses:     T
-Defines:  TTypeSupport, TDataWriter, TDataReader*/
+namespace myModule {
 
-#if (defined(RTI_WIN32) || defined(RTI_WINCE)) && defined(NDDS_USER_DLL_EXPORT)
-/* If the code is building on Windows, start exporting symbols. */
-#undef NDDSUSERDllExport
-#define NDDSUSERDllExport __declspec(dllexport)
-#endif
+    /* ========================================================================== */
+    /**
+    Uses:     T
+    Defines:  TTypeSupport, TDataWriter, TDataReader*/
 
-DDS_TYPESUPPORT_CPP(myModule_myTypeTypeSupport, myModule_myType);
-DDS_DATAWRITER_CPP(myModule_myTypeDataWriter, myModule_myType);
+    #if (defined(RTI_WIN32) || defined(RTI_WINCE)) && defined(NDDS_USER_DLL_EXPORT)
+    /* If the code is building on Windows, start exporting symbols. */
+    #undef NDDSUSERDllExport
+    #define NDDSUSERDllExport __declspec(dllexport)
+    #endif
 
-DDS_DATAREADER_CPP(myModule_myTypeDataReader, myModule_myType);
+    DDS_TYPESUPPORT_CPP(myTypeTypeSupport, myType);
+    DDS_DATAWRITER_CPP(myTypeDataWriter, myType);
 
-#if (defined(RTI_WIN32) || defined(RTI_WINCE)) && defined(NDDS_USER_DLL_EXPORT)
-/* If the code is building on Windows, stop exporting symbols. */
-#undef NDDSUSERDllExport
-#define NDDSUSERDllExport
-#endif
+    DDS_DATAREADER_CPP(myTypeDataReader, myType);
+
+    #if (defined(RTI_WIN32) || defined(RTI_WINCE)) && defined(NDDS_USER_DLL_EXPORT)
+    /* If the code is building on Windows, stop exporting symbols. */
+    #undef NDDSUSERDllExport
+    #define NDDSUSERDllExport
+    #endif
+
+} /* namespace myModule  */
 
 #endif  /* quickstartSupport_214727307_h */
 
