@@ -22,113 +22,113 @@ or consult the RTI Data Distribution Service manual.
 #define NDDSUSERDllExport __declspec(dllexport)
 #endif
 
-static const DDS_String myModule_my_topic_name = "myTopic";
+namespace myModule {
 
-extern "C" {
+    static const DDS_String my_topic_name = "myTopic";
 
-    extern const char *myModule_myTypeTYPENAME;
+    extern const char *myTypeTYPENAME;
 
-}
-
-struct myModule_myTypeSeq;
-#ifndef NDDS_STANDALONE_TYPE
-class myModule_myTypeTypeSupport;
-class myModule_myTypeDataWriter;
-class myModule_myTypeDataReader;
-#endif
-class myModule_myType 
-{
-  public:
-    typedef struct myModule_myTypeSeq Seq;
+    struct myTypeSeq;
     #ifndef NDDS_STANDALONE_TYPE
-    typedef myModule_myTypeTypeSupport TypeSupport;
-    typedef myModule_myTypeDataWriter DataWriter;
-    typedef myModule_myTypeDataReader DataReader;
+    class myTypeTypeSupport;
+    class myTypeDataWriter;
+    class myTypeDataReader;
+    #endif
+    class myType 
+    {
+      public:
+        typedef struct myTypeSeq Seq;
+        #ifndef NDDS_STANDALONE_TYPE
+        typedef myTypeTypeSupport TypeSupport;
+        typedef myTypeDataWriter DataWriter;
+        typedef myTypeDataReader DataReader;
+        #endif
+
+        DDS_Long   id ;
+        DDS_Long   value1 ;
+        DDS_Boolean   state ;
+        DDS_String   name ;
+
+    };
+    #if (defined(RTI_WIN32) || defined (RTI_WINCE) || defined(RTI_INTIME)) && defined(NDDS_USER_DLL_EXPORT)
+    /* If the code is building on Windows, start exporting symbols.
+    */
+    #undef NDDSUSERDllExport
+    #define NDDSUSERDllExport __declspec(dllexport)
     #endif
 
-    DDS_Long   id ;
-    DDS_Long   value1 ;
-    DDS_Boolean   state ;
-    DDS_String   name ;
+    #ifndef NDDS_STANDALONE_TYPE
+    NDDSUSERDllExport DDS_TypeCode* myType_get_typecode(void); /* Type code */
+    NDDSUSERDllExport RTIXCdrTypePlugin *myType_get_type_plugin_info(void);
+    NDDSUSERDllExport RTIXCdrSampleAccessInfo *myType_get_sample_access_info(void);
+    #endif
 
-};
-#if (defined(RTI_WIN32) || defined (RTI_WINCE) || defined(RTI_INTIME)) && defined(NDDS_USER_DLL_EXPORT)
-/* If the code is building on Windows, start exporting symbols.
-*/
-#undef NDDSUSERDllExport
-#define NDDSUSERDllExport __declspec(dllexport)
-#endif
+    #define REDA_SEQUENCE_USER_API
+    #define T myType
+    #define TSeq myTypeSeq
+    #define REDA_SEQUENCE_EXCLUDE_C_METHODS
+    #define REDA_SEQUENCE_USER_CPP
+    #include <reda/reda_sequence_decl.h>
+    #define REDA_SEQUENCE_USER_API
+    #define T myType
+    #define TSeq myTypeSeq
+    #define REDA_SEQUENCE_EXCLUDE_STRUCT
+    #define REDA_SEQUENCE_USER_CPP
+    #include <reda/reda_sequence_decl.h>
 
-#ifndef NDDS_STANDALONE_TYPE
-NDDSUSERDllExport DDS_TypeCode* myModule_myType_get_typecode(void); /* Type code */
-NDDSUSERDllExport RTIXCdrTypePlugin *myModule_myType_get_type_plugin_info(void);
-NDDSUSERDllExport RTIXCdrSampleAccessInfo *myModule_myType_get_sample_access_info(void);
-#endif
+    NDDSUSERDllExport extern myType*
+    myType_create();
 
-#define REDA_SEQUENCE_USER_API
-#define T myModule_myType
-#define TSeq myModule_myTypeSeq
-#define REDA_SEQUENCE_EXCLUDE_C_METHODS
-#define REDA_SEQUENCE_USER_CPP
-#include <reda/reda_sequence_decl.h>
-#define REDA_SEQUENCE_USER_API
-#define T myModule_myType
-#define TSeq myModule_myTypeSeq
-#define REDA_SEQUENCE_EXCLUDE_STRUCT
-#define REDA_SEQUENCE_USER_CPP
-#include <reda/reda_sequence_decl.h>
+    NDDSUSERDllExport extern void
+    myType_delete(myType* sample);
 
-NDDSUSERDllExport extern myModule_myType*
-myModule_myType_create();
+    NDDSUSERDllExport
+    RTIBool myType_initialize(
+        myType* self);
 
-NDDSUSERDllExport extern void
-myModule_myType_delete(myModule_myType* sample);
+    NDDSUSERDllExport
+    RTIBool myType_initialize_ex(
+        myType* self,RTIBool allocatePointers,RTIBool allocateMemory);
 
-NDDSUSERDllExport
-RTIBool myModule_myType_initialize(
-    myModule_myType* self);
+    NDDSUSERDllExport
+    RTIBool myType_initialize_w_params(
+        myType* self,
+        const struct DDS_TypeAllocationParams_t * allocParams);  
 
-NDDSUSERDllExport
-RTIBool myModule_myType_initialize_ex(
-    myModule_myType* self,RTIBool allocatePointers,RTIBool allocateMemory);
+    NDDSUSERDllExport
+    RTIBool myType_finalize(
+        myType* self);
 
-NDDSUSERDllExport
-RTIBool myModule_myType_initialize_w_params(
-    myModule_myType* self,
-    const struct DDS_TypeAllocationParams_t * allocParams);  
+    NDDSUSERDllExport
+    RTIBool myType_finalize_w_return(
+        myType* self);
 
-NDDSUSERDllExport
-RTIBool myModule_myType_finalize(
-    myModule_myType* self);
+    NDDSUSERDllExport
+    void myType_finalize_ex(
+        myType* self,RTIBool deletePointers);
 
-NDDSUSERDllExport
-RTIBool myModule_myType_finalize_w_return(
-    myModule_myType* self);
+    NDDSUSERDllExport
+    void myType_finalize_w_params(
+        myType* self,
+        const struct DDS_TypeDeallocationParams_t * deallocParams);
 
-NDDSUSERDllExport
-void myModule_myType_finalize_ex(
-    myModule_myType* self,RTIBool deletePointers);
+    NDDSUSERDllExport
+    void myType_finalize_optional_members(
+        myType* self, RTIBool deletePointers);  
 
-NDDSUSERDllExport
-void myModule_myType_finalize_w_params(
-    myModule_myType* self,
-    const struct DDS_TypeDeallocationParams_t * deallocParams);
+    NDDSUSERDllExport
+    RTIBool myType_copy(
+        myType* dst,
+        const myType* src);
 
-NDDSUSERDllExport
-void myModule_myType_finalize_optional_members(
-    myModule_myType* self, RTIBool deletePointers);  
+    #if (defined(RTI_WIN32) || defined (RTI_WINCE) || defined(RTI_INTIME)) && defined(NDDS_USER_DLL_EXPORT)
+    /* If the code is building on Windows, stop exporting symbols.
+    */
+    #undef NDDSUSERDllExport
+    #define NDDSUSERDllExport
+    #endif
 
-NDDSUSERDllExport
-RTIBool myModule_myType_copy(
-    myModule_myType* dst,
-    const myModule_myType* src);
-
-#if (defined(RTI_WIN32) || defined (RTI_WINCE) || defined(RTI_INTIME)) && defined(NDDS_USER_DLL_EXPORT)
-/* If the code is building on Windows, stop exporting symbols.
-*/
-#undef NDDSUSERDllExport
-#define NDDSUSERDllExport
-#endif
+} /* namespace myModule  */
 
 #ifndef NDDS_STANDALONE_TYPE
 #endif

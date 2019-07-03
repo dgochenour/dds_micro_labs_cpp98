@@ -7,29 +7,30 @@
 #ifndef rti_me_cpp_hxx
 #include "rti_me_cpp.hxx"
 #endif
-#include "wh_sm/wh_sm_history.h"
-#include "rh_sm/rh_sm_history.h"
 
 #include "quickstart.h"
 #include "quickstartSupport.h"
 #include "quickstartPlugin.h"
 #include "quickstartApplication.h"
 
-class myModule_myTypeReaderListener : public DDSDataReaderListener {
+using namespace DDS;
 
-public:
+class myTypeReaderListener : public DataReaderListener
+{
 
-    virtual void on_data_available(DDSDataReader *reader);
+  public:
+
+    virtual void on_data_available(DataReader *reader);
+
     // LAB #2 -- add a callback for incompatible QoS
-    virtual void on_requested_incompatible_qos(DDSDataReader *reader, const DDS_RequestedIncompatibleQosStatus &status); 	 	
-
+    virtual void on_requested_incompatible_qos(DDSDataReader *reader, const DDS_RequestedIncompatibleQosStatus &status);     
 };
 
 template <typename T>
 void take_and_print(typename T::DataReader* reader)
 {
-    DDS_ReturnCode_t retcode;
-    struct DDS_SampleInfo sample_info;
+    ReturnCode_t retcode;
+    SampleInfo sample_info;
     T *sample = NULL;
 
     sample = T::TypeSupport::create_data();
@@ -40,7 +41,7 @@ void take_and_print(typename T::DataReader* reader)
     }
 
     retcode = reader->take_next_sample(*sample, sample_info);
-    while (retcode == DDS_RETCODE_OK)
+    while (retcode == RETCODE_OK)
     {
         if (sample_info.valid_data)
         {
@@ -63,31 +64,29 @@ void take_and_print(typename T::DataReader* reader)
 }
 
 // LAB #2 -- implement the callback 
-void myModule_myTypeReaderListener::on_requested_incompatible_qos(
+void myTypeReaderListener::on_requested_incompatible_qos(
         DDSDataReader *reader, 
-        const DDS_RequestedIncompatibleQosStatus &status) {
-
+        const DDS::RequestedIncompatibleQosStatus &status) {
+            
     std::cout << "Incompatible QoS! Count: " << status.total_count << std::endl;
 }
-
 void
-myModule_myTypeReaderListener::on_data_available(DDSDataReader * reader)
-{
-    myModule_myTypeDataReader *hw_reader = myModule_myTypeDataReader::narrow(reader);
-    take_and_print<myModule_myType>(hw_reader);
-}
 
-int
-subscriber_main_w_args(DDS_Long domain_id, char *udp_intf, char *peer,
-DDS_Long sleep_time, DDS_Long count)
+myTypeReaderListener::on_data_available(DataReader * reader)
 {
-    DDSSubscriber *subscriber = NULL;
-    DDSDataReader *datareader = NULL;
-    myModule_myTypeReaderListener *listener  = new myModule_myTypeReaderListener();
-    DDS_DataReaderQos dr_qos;
-    DDS_ReturnCode_t retcode;
+    myModule::myTypeDataReader *hw_reader = myModule::myTypeDataReader::narrow(reader);
+    take_and_print<myModule::myType>(hw_reader);
+}
+int
+subscriber_main_w_args(Long domain_id, char *udp_intf, char *peer,
+Long sleep_time, Long count)
+{
+    Subscriber *subscriber = NULL;
+    DataReader *datareader = NULL;
+    myTypeReaderListener *listener  = new myTypeReaderListener();
+    DataReaderQos dr_qos;
+    ReturnCode_t retcode;
     Application *application = NULL;
-    RT_Registry_T *registry = NULL;
 
     application = new Application();
     if (application == NULL)
@@ -103,15 +102,15 @@ DDS_Long sleep_time, DDS_Long count)
     peer, 
     sleep_time, 
     count);
-    if (retcode != DDS_RETCODE_OK)
+    if (retcode != RETCODE_OK)
     {
         printf("failed Application initialize\n");
         goto done;
     }
 
     subscriber = application->participant->create_subscriber(
-        DDS_SUBSCRIBER_QOS_DEFAULT,NULL,
-        DDS_STATUS_MASK_NONE);
+        SUBSCRIBER_QOS_DEFAULT,NULL,
+        STATUS_MASK_NONE);
     if (subscriber == NULL)
     {
         printf("subscriber == NULL\n");
@@ -119,7 +118,7 @@ DDS_Long sleep_time, DDS_Long count)
     }
 
     retcode = subscriber->get_default_datareader_qos(dr_qos);
-    if (retcode != DDS_RETCODE_OK)
+    if (retcode != RETCODE_OK)
     {
         printf("failed get_default_datareader_qos\n");
         goto done;
@@ -135,20 +134,20 @@ DDS_Long sleep_time, DDS_Long count)
 
     // LAB #6 -- introduce exculsive ownership
     dr_qos.ownership.kind = DDS_EXCLUSIVE_OWNERSHIP_QOS;
-
-    // LAB #4 -- set deadline to 1.5s
+    
+    // LAB #4 -- set DR & DW  both to 1.5s deadline
     // LAB #2 -- add a deadline to DataReader 
     dr_qos.deadline.period.sec = 1;
     dr_qos.deadline.period.nanosec = 500000000; // .5s
 
     /* Reliability QoS */
     #ifdef USE_RELIABLE_QOS
-    dr_qos.reliability.kind = DDS_RELIABLE_RELIABILITY_QOS;
+    dr_qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
     #else
-    dr_qos.reliability.kind = DDS_BEST_EFFORT_RELIABILITY_QOS;
+    dr_qos.reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
     #endif
 
-    /* Only DDS_DATA_AVAILABLE_STATUS supported currently */
+    // LAB #2 -- add the DDS_REQUESTED_INCOMPATIBLE_QOS_STATUS mask
     datareader = subscriber->create_datareader(
         application->topic,
         dr_qos,
@@ -162,7 +161,7 @@ DDS_Long sleep_time, DDS_Long count)
     }
 
     retcode = application->enable();
-    if (retcode != DDS_RETCODE_OK)
+    if (retcode != RETCODE_OK)
     {
         printf("failed to enable application\n");
         goto done;
@@ -211,12 +210,12 @@ DDS_Long sleep_time, DDS_Long count)
 int
 main(int argc, char **argv)
 {
-    DDS_Long i = 0;
-    DDS_Long domain_id = 0;
+    Long i = 0;
+    Long domain_id = 0;
     char *peer = NULL;
     char *udp_intf = NULL;
-    DDS_Long sleep_time = 1000;
-    DDS_Long count = 0;
+    Long sleep_time = 1000;
+    Long count = 0;
 
     for (i = 1; i < argc; ++i)
     {
@@ -289,11 +288,11 @@ int
 subscriber_main(void)
 {
     /* Explicitly configure args below */
-    DDS_Long domain_id = 44;
+    Long domain_id = 44;
     char *peer = "10.10.65.103";
     char *udp_intf = NULL;
-    DDS_Long sleep_time = 1000;
-    DDS_Long count = 0;
+    Long sleep_time = 1000;
+    Long count = 0;
 
     return subscriber_main_w_args(domain_id, udp_intf, peer, sleep_time, count);
 }

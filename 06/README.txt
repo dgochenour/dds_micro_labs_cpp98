@@ -33,7 +33,7 @@ generated that implement a type-plugin interface.  The example Makefile
 will generate these support files, by invoking rtiddsgen.  Note that rtiddsgen
 can be invoked manually, with an example command like this:
 
-    ${RTIMEHOME}/rtiddsgen/scripts/rtiddsgen -micro -language C++ quickstart.idl
+    ${RTIMEHOME}/rtiddsgen/scripts/rtiddsgen -micro -language C++ -namespace quickstart.idl
 
 The generated source files are quickstart.cxx, quickstartSupport.cxx, and 
 quickstartPlugin.cxx. Associated header files are also generated.
