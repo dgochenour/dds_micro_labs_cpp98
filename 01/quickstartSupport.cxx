@@ -10,58 +10,61 @@ or consult the RTI Data Distribution Service manual.
 #include "quickstartSupport.h"
 
 /*** SOURCE_BEGIN ***/
+namespace myModule {
 
-/* =========================================================================== */
+    /* =========================================================================== */
 
-/* Requires */
-#define TTYPENAME   myModule_myTypeTYPENAME
+    /* Requires */
+    #define TTYPENAME   myTypeTYPENAME
 
-/* 
-myModule_myTypeDataWriter (DDSDataWriter)   
-*/
+    /* 
+    myModule::myTypeDataWriter (DDSDataWriter)   
+    */
 
-/* Defines */
-#define TDataWriter myModule_myTypeDataWriter
-#define TData       myModule_myType
+    /* Defines */
+    #define TDataWriter myTypeDataWriter
+    #define TData       myModule::myType
 
-#ifdef __cplusplus
-#include "dds_cpp/dds_cpp_tdatawriter_gen.hxx"
-#endif
+    #ifdef __cplusplus
+    #include "dds_cpp/dds_cpp_tdatawriter_gen.hxx"
+    #endif
 
-#undef TDataWriter
-#undef TData
+    #undef TDataWriter
+    #undef TData
 
-/* =========================================================================== */
-/* 
-myModule_myTypeDataReader (DDSDataReader)   
-*/
+    /* =========================================================================== */
+    /* 
+    myModule::myTypeDataReader (DDSDataReader)   
+    */
 
-/* Defines */
-#define TDataReader myModule_myTypeDataReader
-#define TDataSeq    myModule_myTypeSeq
-#define TData       myModule_myType
-#ifdef __cplusplus
-#include "dds_cpp/dds_cpp_tdatareader_gen.hxx"
-#endif
-#undef TDataReader
-#undef TDataSeq
-#undef TData
+    /* Defines */
+    #define TDataReader myTypeDataReader
+    #define TDataSeq    myTypeSeq
+    #define TData       myModule::myType
+    #ifdef __cplusplus
+    #include "dds_cpp/dds_cpp_tdatareader_gen.hxx"
+    #endif
+    #undef TDataReader
+    #undef TDataSeq
+    #undef TData
 
-/* =========================================================================== */
-/* 
-myModule_myTypeTypeSupport
+    /* =========================================================================== */
+    /* 
+    myModule::myTypeTypeSupport
 
-*/
+    */
 
-#define TTypeSupport myModule_myTypeTypeSupport
-#define TData        myModule_myType
+    #define TTypeSupport myTypeTypeSupport
+    #define TData        myModule::myType
 
-#ifdef __cplusplus
-#include "dds_cpp/dds_cpp_ttypesupport_gen.hxx"
-#endif
+    #ifdef __cplusplus
+    #include "dds_cpp/dds_cpp_ttypesupport_gen.hxx"
+    #endif
 
-#undef TTypeSupport
-#undef TData
+    #undef TTypeSupport
+    #undef TData
 
-#undef TTYPENAME
+    #undef TTYPENAME
+
+} /* namespace myModule  */
 

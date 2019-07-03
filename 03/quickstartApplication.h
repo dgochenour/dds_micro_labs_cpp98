@@ -6,6 +6,8 @@
 #include "rti_me_cpp.hxx"
 #endif
 
+using namespace DDS;
+
 /* Define USE_RELIABLE_QOS to use reliable
 * reliability; otherwise, best-effort is used
 */
@@ -14,24 +16,24 @@
 class Application
 {
   public:
-    DDSDomainParticipant *participant; 
-    DDSTopic *topic; 
+    DomainParticipant *participant; 
+    Topic *topic; 
     char topic_name[255];
     char type_name[255];
-    DDS_Long sleep_time;
-    DDS_Long count;
+    Long sleep_time;
+    Long count;
 
     static void help(char *appname);
 
-    DDS_ReturnCode_t initialize(const char *local_participant_name,
+    ReturnCode_t initialize(const char *local_participant_name,
     const char *remote_participant_name,
-    DDS_Long domain_id, 
+    Long domain_id, 
     char *udp_intf, 
     char *peer, 
-    DDS_Long sleep_time, 
-    DDS_Long count);
+    Long sleep_time, 
+    Long count);
 
-    DDS_ReturnCode_t enable();
+    ReturnCode_t enable();
 
     Application();
     ~Application();

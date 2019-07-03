@@ -8,26 +8,24 @@
 #include "rti_me_cpp.hxx"
 #endif
 
-#include "wh_sm/wh_sm_history.h"
-#include "rh_sm/rh_sm_history.h"
-
 #include "quickstart.h"
 #include "quickstartSupport.h"
 #include "quickstartApplication.h"
 
-class myModule_myTypeDataWriterListener : public DDSDataWriterListener {
+using namespace DDS;
 
-public:
-
-    myModule_myTypeDataWriterListener() : DDSDataWriterListener() { }
-    ~myModule_myTypeDataWriterListener() { }
+class myTypeDataWriterListener : public DataWriterListener
+{
+  public:
+    myTypeDataWriterListener() : DataWriterListener() { }
+    ~myTypeDataWriterListener() { }
 
     // LAB #3 -- add a callback for incompatible offered QoS
     virtual void on_offered_incompatible_qos(DDSDataWriter *writer, const DDS_OfferedIncompatibleQosStatus &status);
 };
 
 // LAB #3 -- implement the callback 
-void myModule_myTypeDataWriterListener::on_offered_incompatible_qos(
+void myTypeDataWriterListener::on_offered_incompatible_qos(
         DDSDataWriter *writer, 
         const DDS_OfferedIncompatibleQosStatus &status) {
 
@@ -35,20 +33,21 @@ void myModule_myTypeDataWriterListener::on_offered_incompatible_qos(
 }
 
 int
-publisher_main_w_args(DDS_Long domain_id, char *udp_intf, char *peer,
-DDS_Long sleep_time, DDS_Long count)
+publisher_main_w_args(Long domain_id, char *udp_intf, char *peer,
+Long sleep_time, Long count)
 {
     Application *application = NULL;
 
-    DDSPublisher *publisher = NULL;
-    DDSDataWriter *datawriter = NULL;
-    myModule_myTypeDataWriter *hw_writer = NULL;
-    DDS_DataWriterQos dw_qos;
-    DDS_ReturnCode_t retcode;
-    myModule_myType *sample = NULL;
-    DDS_Long i;
+    Publisher *publisher = NULL;
+    DataWriter *datawriter = NULL;
+    myModule::myTypeDataWriter *hw_writer = NULL;
+    DataWriterQos dw_qos;
+    ReturnCode_t retcode;
+    myModule::myType *sample = NULL;
+    Long i;
+
     // LAB #3 -- instantiate a DW listener
-    DDSDataWriterListener *dw_listener = new myModule_myTypeDataWriterListener();
+    DDSDataWriterListener *dw_listener = new myTypeDataWriterListener();    
 
     application = new Application();
     if (application == NULL)
@@ -64,14 +63,14 @@ DDS_Long sleep_time, DDS_Long count)
     peer, 
     sleep_time, 
     count);
-    if (retcode != DDS_RETCODE_OK)
+    if (retcode != RETCODE_OK)
     {
         printf("failed Application initialize\n");
         goto done;
     }
 
     publisher = application->participant->create_publisher(
-        DDS_PUBLISHER_QOS_DEFAULT,NULL,DDS_STATUS_MASK_NONE);
+        PUBLISHER_QOS_DEFAULT,NULL,STATUS_MASK_NONE);
     if (publisher == NULL)
     {
         printf("publisher == NULL\n");
@@ -79,16 +78,16 @@ DDS_Long sleep_time, DDS_Long count)
     }
 
     retcode = publisher->get_default_datawriter_qos(dw_qos);
-    if (retcode != DDS_RETCODE_OK)
+    if (retcode != RETCODE_OK)
     {
         printf("failed get_default_datawriter_qos\n");
         goto done;
     }
 
     #ifdef USE_RELIABLE_QOS
-    dw_qos.reliability.kind = DDS_RELIABLE_RELIABILITY_QOS;
+    dw_qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
     #else
-    dw_qos.reliability.kind = DDS_BEST_EFFORT_RELIABILITY_QOS;
+    dw_qos.reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
     #endif
     dw_qos.resource_limits.max_samples = 32;
     dw_qos.resource_limits.max_samples_per_instance = 32;
@@ -97,7 +96,7 @@ DDS_Long sleep_time, DDS_Long count)
 
     // LAB #2 -- Add deadline to the DataWriter Qos
     dw_qos.deadline.period.sec = 1;
-    dw_qos.deadline.period.nanosec = 500000000; // .5s
+    dw_qos.deadline.period.nanosec = 500000000; // .5s    
 
     // LAB #3 -- add the incompatible qos mask and specify the listener
     datawriter = publisher->create_datawriter(
@@ -112,23 +111,23 @@ DDS_Long sleep_time, DDS_Long count)
     }
 
     retcode = application->enable();
-    if (retcode != DDS_RETCODE_OK)
+    if (retcode != RETCODE_OK)
     {
         printf("failed to enable application\n");
         goto done;
     }
 
-    hw_writer = myModule_myTypeDataWriter::narrow(datawriter);
+    hw_writer = myModule::myTypeDataWriter::narrow(datawriter);
     if (hw_writer == NULL)
     {
         printf("failed datawriter narrow\n");
         goto done;
     }
 
-    sample = myModule_myTypeTypeSupport::create_data();
+    sample = myModule::myTypeTypeSupport::create_data();
     if (sample == NULL)
     {
-        printf("failed myModule_myType_create\n");
+        printf("failed myModule::myType_create\n");
         return -1;
     }
 
@@ -139,13 +138,13 @@ DDS_Long sleep_time, DDS_Long count)
     {
         /* TODO set sample attributes here */
         
-        // LAB #1 - set some values in the sample before we send it
+        // LAB #1 -- set some values in the sample before we send it
         sample->id =1234;
         sample->value1 = i;
         sample->name = "DonGochenour";
 
-        retcode = hw_writer->write(*sample, DDS_HANDLE_NIL);
-        if (retcode != DDS_RETCODE_OK)
+        retcode = hw_writer->write(*sample, HANDLE_NIL);
+        if (retcode != RETCODE_OK)
         {
             printf("Failed to write sample\n");
         } 
@@ -163,12 +162,10 @@ DDS_Long sleep_time, DDS_Long count)
     {
         delete application;
     }
-
     if (sample != NULL)
     {
-        myModule_myTypeTypeSupport::delete_data(sample);
+        myModule::myTypeTypeSupport::delete_data(sample);
     } 
-
     return 0;
 }
 
@@ -177,12 +174,12 @@ int
 main(int argc, char **argv)
 {
 
-    DDS_Long i = 0;
-    DDS_Long domain_id = 0;
+    Long i = 0;
+    Long domain_id = 0;
     char *peer = NULL;
     char *udp_intf = NULL;
-    DDS_Long sleep_time = 1000;
-    DDS_Long count = 0;
+    Long sleep_time = 1000;
+    Long count = 0;
 
     for (i = 1; i < argc; ++i)
     {
@@ -255,12 +252,12 @@ int
 publisher_main(void)
 {
     /* Explicitly configure args below */
-    DDS_Long i = 0;
-    DDS_Long domain_id = 44;
+    Long i = 0;
+    Long domain_id = 44;
     char *peer = "10.10.65.104";
     char *udp_intf = NULL;
-    DDS_Long sleep_time = 1000;
-    DDS_Long count = 0;
+    Long sleep_time = 1000;
+    Long count = 0;
 
     return publisher_main_w_args(domain_id, udp_intf, peer, sleep_time, count);
 }
