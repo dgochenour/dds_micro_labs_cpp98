@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<types xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:////home/dgochenour/rti_connext_dds-6.0.0/rti_connext_dds_micro-3.0.0/rtiddsgen/scripts/../resource/rtiddsgen/schema/rti_dds_topic_types.xsd">
+<types xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:////Applications/rti_connext_dds-6.0.0/rti_connext_dds_micro-3.0.0/rtiddsgen/scripts/../resource/rtiddsgen/schema/rti_dds_topic_types.xsd">
 <module name="myModule">
   <struct name= "myType">
     <member name="id" type="int32"/>
