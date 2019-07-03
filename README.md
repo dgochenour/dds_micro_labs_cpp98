@@ -1,7 +1,10 @@
 Lab 1. Out Of The Box
 
   - Create an IDL file, then generate code
+    - $ $RTIMEHOME/rtiddsgen/scripts/rtiddsgen -micro -language C++ -namespace -create typefiles -create examplefiles -create makefiles
   - In the publisher code, give the sample some values, just so they are not empty
+  - Build the example code
+    - $ $RTIMEHOME/resource/scripts/rtime-make --config Release --build --name x64Darwin17clang9.0 --target Darwin --source-dir . -G "Unix Makefiles" --delete
 
 Lab 2. Deadline QoS
 
@@ -22,15 +25,17 @@ Lab 4. Load user type into Admin Console
   - create XML type representation and load into Admin Console
     - $RTIMEHOME/rtiddsgen/scripts/rtiddsgen -convertToXml ./quickstart.idl
   - open the tool and note how all DWs are writing to the same instance
-    - but it doesn't work! (change the type name in quickstartApplication.c)
+    - but it doesn't work if you aren't using namespaces! (change the type name in quickstartApplication.c)
+    - also: increase resource limiations in the same file
 
 Lab 5. Switch to a keyed type, and define topic name in IDL
 
   - modify the IDL to add //@key to the "id" member
   - add a constant for the topic name
   - call rtiddsgen again to impose the change (remember: "update", not "create")
-    - $RTIMEHOME/rtiddsgen/scripts/rtiddsgen -micro -language C++ -update typefiles ./quickstart.idl
+    - $RTIMEHOME/rtiddsgen/scripts/rtiddsgen -micro -language C++ -namespace -update typefiles ./quickstart.idl
   - modify quickstartApplication.cxx to use this constant
+  - don't forget to also update the XML type file
 
 Lab 6. Ownership
 
@@ -40,7 +45,7 @@ Lab 6. Ownership
 
 Lab 7. Waitsets
 
-  - remove or comment out the exclusize ownership code in the pub and sub
+  - remove or comment out the exclusive ownership code in the pub and sub
   - modify the subscriber code to use a waitset to be notified of data
   - "recycle" the listener callback and call it when the WaitSet returns with
     data.
